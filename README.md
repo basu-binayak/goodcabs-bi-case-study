@@ -148,55 +148,11 @@ This dashboard focuses on the following business KPIs:
 
 ### **4.1 Data Preparation — Power Query (M Language)**
 
-- Import raw tables from both databases
-- Clean, structure, and validate data
-- Apply transformations for date, city, and fact alignment
-- Build a star schema
-
-### **4.2 Data Modelling (preliminary)— Star Schema**
-
-**Dimensions:**
-
-✔ dim_city
-
-✔ dim_date
-
-**Facts:**
-
-✔ fact_trips
-
-✔ fact_passenger_summary
-
-✔ dim_repeat_trip_distribution
-
-**Targets:**
-
-✔ city_target_passenger_rating
-
-✔ monthly_target_new_passengers
-
-✔ monthly_target_trips
+### **4.2 Data Modelling — Star Schema**
 
 ### **4.3 Business Logic — DAX**
 
-DAX used for:
-
-- Aggregations (Trips, Passengers, Revenue)
-- Averages (Fare, Distance, Ratings)
-- Ratios (Repeat %, New vs Repeat mix)
-- Time intelligence (MoM growth)
-- KPI target comparisons
-
 ### **4.4 Reporting**
-
-Developed fully in **Power BI Desktop** with:
-
-- City-level performance visuals
-- Trend analysis
-- KPI cards
-- Repeat trip behavior charts
-- New vs repeat distribution
-- Target vs actual comparisons
 
 ### **4.5 Publishing**
 
