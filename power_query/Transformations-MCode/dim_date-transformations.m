@@ -1,0 +1,28 @@
+let
+    Source = Folder.Files("D:\GITHUB_RESUME\goodcabs-bi-case-study\data"),
+    #"D:\GITHUB_RESUME\goodcabs-bi-case-study\data\_dim_date csv" = Source{[#"Folder Path"="D:\GITHUB_RESUME\goodcabs-bi-case-study\data\",Name="dim_date.csv"]}[Content],
+    #"Imported CSV" = Csv.Document(#"D:\GITHUB_RESUME\goodcabs-bi-case-study\data\_dim_date csv",[Delimiter=",", Columns=4, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(#"Imported CSV", [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"date", type date}, {"start_of_month", type date}, {"month_name", type text}, {"day_type", type text}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"month_name"}),
+    #"Added Custom" = Table.AddColumn(#"Removed Columns", "date_SK", each Date.ToText([date],"yyyy") & Date.ToText([date], "MM") & Date.ToText([date], "dd")),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom",{{"date_SK", type text}}),
+    #"Reordered Columns" = Table.ReorderColumns(#"Changed Type1",{"date_SK", "date", "start_of_month", "day_type"}),
+    #"Merged Queries" = Table.NestedJoin(#"Reordered Columns", {"start_of_month"}, dim_month, {"month"}, "dim_month", JoinKind.LeftOuter),
+    #"Expanded dim_month" = Table.ExpandTableColumn(#"Merged Queries", "dim_month", {"month_SK"}, {"month_SK"}),
+    #"Reordered Columns1" = Table.ReorderColumns(#"Expanded dim_month",{"date_SK", "date", "start_of_month", "month_SK", "day_type"}),
+    #"Inserted Week of Year" = Table.AddColumn(#"Reordered Columns1", "Week of Year", each Date.WeekOfYear([date]), Int64.Type),
+    #"Renamed Columns2" = Table.RenameColumns(#"Inserted Week of Year",{{"Week of Year", "week_of_year"}}),
+    #"Inserted Week of Month" = Table.AddColumn(#"Renamed Columns2", "Week of Month", each Date.WeekOfMonth([date]), Int64.Type),
+    #"Renamed Columns3" = Table.RenameColumns(#"Inserted Week of Month",{{"Week of Month", "week_of_month"}}),
+    #"Inserted Day" = Table.AddColumn(#"Renamed Columns3", "Day", each Date.Day([date]), Int64.Type),
+    #"Renamed Columns4" = Table.RenameColumns(#"Inserted Day",{{"Day", "day"}}),
+    #"Inserted Day of Week" = Table.AddColumn(#"Renamed Columns4", "Day of Week", each Date.DayOfWeek([date]), Int64.Type),
+    #"Renamed Columns5" = Table.RenameColumns(#"Inserted Day of Week",{{"Day of Week", "day_of_week"}}),
+    #"Inserted Day Name" = Table.AddColumn(#"Renamed Columns5", "Day Name", each Date.DayOfWeekName([date]), type text),
+    #"Renamed Columns6" = Table.RenameColumns(#"Inserted Day Name",{{"Day Name", "day_name"}}),
+    #"Reordered Columns2" = Table.ReorderColumns(#"Renamed Columns6",{"date_SK", "date", "start_of_month", "month_SK", "week_of_year", "week_of_month", "day", "day_of_week", "day_name", "day_type"}),
+    #"Renamed Columns7" = Table.RenameColumns(#"Reordered Columns2",{{"month_SK", "month_FK"}}),
+    #"Removed Columns1" = Table.RemoveColumns(#"Renamed Columns7",{"start_of_month"})
+in
+    #"Removed Columns1"
